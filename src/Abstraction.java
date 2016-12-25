@@ -2,7 +2,7 @@
  * The Abstraction class represents an Abstraction in form of
  * Abstraction = λ var.expression
  */
-public class Abstraction {
+public class Abstraction implements Typable{
     private String var;
     private Value exp;
 
@@ -59,5 +59,10 @@ public class Abstraction {
     public boolean canApply() {
         return exp.asString().matches(".*\\b" + var + "\\b.*");
     }
+
+	@Override
+	public String getType() {
+		return exp.getType();
+	}
 
 }

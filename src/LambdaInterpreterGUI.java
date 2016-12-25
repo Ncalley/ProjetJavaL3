@@ -323,6 +323,9 @@ public class LambdaInterpreterGUI extends javax.swing.JFrame {
                         if (!result.asString().equals(term)) {
                             workSpace.append("  =  " + result.asString() + "\n");
                         }
+						if (checkTypeOption.isSelected()){
+							//workSpace.append("output type : " + "type" + "\n");
+						}
                         term = result.asString();
                         iterateCounter++;
                     } while (result.checkContinue() && iterateCounter < 100);

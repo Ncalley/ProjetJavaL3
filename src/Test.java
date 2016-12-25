@@ -58,6 +58,9 @@ public class Test {
 
 
         System.out.println("x+x+xy".replaceAll("\\bx\\b","5"));
-
+		
+		/*Value a = new Value(new FreeVariableVisitor());
+		System.out.println(a.getType());
+		System.out.println(a.isTypable());*/
     }
 }
