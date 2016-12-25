@@ -3,7 +3,7 @@ import java.util.Objects;
 /**
  * Classe "type" pour les variables.
  */
-public class Variable {
+public class Variable{
 
     private String id;
 

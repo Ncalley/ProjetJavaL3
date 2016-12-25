@@ -3,7 +3,7 @@ import java.util.Objects;
 /**
  * La classe RecFunc est la classe qui représente une fonction recursive.
  */
-public class RecFunction {
+public class RecFunction implements Typable{
 
     private Variable funcNameVar;
     private Variable applyToVar;
@@ -48,4 +48,13 @@ public class RecFunction {
     public String toString() {
         return "(rec " + funcNameVar + " " + applyToVar + "." + function + ")";
     }
+
+	/**
+	 * Renvoie le type de la fonction récursive
+	 * @return String 
+	 */
+	@Override
+	public String getType() {
+		return function.getType();
+	}
 }

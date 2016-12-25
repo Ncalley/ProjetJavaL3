@@ -5,7 +5,7 @@ import java.util.Objects;
  * On prend garde à bien spécifier l'opérateur, en effet, toutes les opérations de comparaison sont supportées
  * par le programme.
  */
-public class IfStat {
+public class IfStat implements Typable{
 
     private Value leftToEq;
     private Value rightToEq;
@@ -62,4 +62,15 @@ public class IfStat {
     public String toString() {
         return "if(" + leftToEq + operator + rightToEq + ")then{" + thenReturn + "}else{" + elseReturn + "}";
     }
+
+	/**
+	 * Typage suivant l'énoncé, si les deux opérateurs sont de même type on renvoie le type de la sortie then
+	 * sinon on renvoie le type de la sortie else
+	 * @return String
+	 */
+	@Override
+	public String getType() {
+		if( leftToEq.getType().equals(rightToEq.getType()) ){ return thenReturn.getType(); }
+		return elseReturn.getType();
+	}
 }

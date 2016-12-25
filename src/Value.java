@@ -4,10 +4,13 @@ import java.util.Objects;
  * La classe Value est une simple classe Wrapper de tous les autres types.
  * Les méthodes des Visitors crée par ANTLR4 devant tous retourner le même type,
  * il est nécessaire d'englober tout nos types dans ce type.
+ * 
+ * Objet clé dans le typage du programme
  */
-public class Value {
+public class Value implements Typable{
 
     final Object value;
+	
 
     public Value(Object value) {
         this.value = value;
@@ -60,6 +63,14 @@ public class Value {
     public boolean isCalcul() {
         return value instanceof Calcul;
     }
+	
+	/**
+	 * Renvoie vrai si la valeur est typable (par défaut les chaines et entiers sont typables)
+	 * @return boolean
+	 */
+	public boolean isTypable() {
+		return Typable.class.isInstance(value) || isInteger() || isString();
+	}
 
 
     @Override
@@ -87,7 +98,21 @@ public class Value {
         return String.valueOf(value);
     }
 
-
+	/**
+	 * Méthode qui renvoie le type contenu dans la Value 
+	 * Int et String étant des types de base, si on les voit on renvoie leur type
+	 * sinon on renvoie le type de l'objet contenu dans la value (cas d'une récursion ou d'un calcul par exemple)
+	 * enfin si l'objet n'est pas typable on renvoie invalide.
+	 * @return String
+	 */
+	@Override
+	public String getType() {
+		if(isInteger()){ return "Int"; }
+		if(isString()){ return "String"; }
+		if(isTypable()){ return ((Typable) value).getType(); }
+		return "Invalide";
+	}
+	
     /**
      * Cette méthode est la pour vérifier si la boucle du parser/lexer doit s'areter (dans le cas ou on a une abstraction ou
      * une valeur)

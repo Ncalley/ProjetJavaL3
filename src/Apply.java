@@ -5,7 +5,7 @@ import java.util.Objects;
  * expression expression, où l'espace entre deux expression
  * est crucial, car il indique l'application.
  */
-public class Apply {
+public class Apply implements Typable{
     private Value left;
     private Value right;
 
@@ -51,5 +51,15 @@ public class Apply {
     public int hashCode() {
         return Objects.hash(getLeft(), getRight());
     }
+
+	/**
+	 * Pas très cohérent mais j'ai essayé de faire au plus logique
+	 * @return String
+	 */
+	@Override
+	public String getType() {
+		//return left.getType()+" "+right.getType();
+		return right.getType();
+	}
 
 }
