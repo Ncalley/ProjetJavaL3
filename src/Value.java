@@ -64,6 +64,10 @@ public class Value implements Typable{
         return value instanceof Calcul;
     }
 	
+	public boolean isIfStat() {
+        return value instanceof IfStat;
+    }
+	
 	/**
 	 * Renvoie vrai si la valeur est typable (par défaut les chaines et entiers sont typables)
 	 * @return boolean
