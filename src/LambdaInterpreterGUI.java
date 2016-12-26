@@ -323,12 +323,12 @@ public class LambdaInterpreterGUI extends javax.swing.JFrame {
                         if (!result.asString().equals(term)) {
                             workSpace.append("  =  " + result.asString() + "\n");
                         }
-						if (checkTypeOption.isSelected()){
-							//workSpace.append("output type : " + "type" + "\n");
-						}
                         term = result.asString();
                         iterateCounter++;
                     } while (result.checkContinue() && iterateCounter < 100);
+					if (checkTypeOption.isSelected()){
+						workSpace.append("output type : " + result.getType() + "\n");
+					}
                 } catch (ParseCancellationException e) {
                     workSpace.append(e.getMessage());
                     saveTermModel.removeElement(saveTermModel.lastElement());
