@@ -45,7 +45,11 @@ public class LambdaBasicVisitor extends LambdaBaseVisitor<Value> {
      */
     @Override
     public Value visitVariable(LambdaParser.VariableContext ctx) {
-        return new Value(new Variable(ctx.getText()));
+		Variable v = new Variable(ctx.getText());
+		if(v.getId().matches("^\\p{Alpha}+$")){
+			v.setType("String");
+		}
+        return new Value(v);
     }
 
     /**
