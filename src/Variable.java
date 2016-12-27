@@ -6,6 +6,7 @@ import java.util.Objects;
 public class Variable implements Typable{
 
     private String id;
+	private String type="Int";
 
     public Variable(String id) {
         this.id = id;
@@ -34,13 +35,20 @@ public class Variable implements Typable{
     }
 
 	/**
-	 * On considère qu'une variable renvoie toujours un entier (ceci est faux et conduit à divers problèmes notamment avec les if)
-	 * /!\ GROS PROBLEME /!\
+	 * Permet de définir le type contenu dans la variable
+	 * @param type 
+	 */
+	public void setType(String type){
+		this.type = type;
+	}
+	
+	/**
+	 * Par défaut une variable non définie sera comptée comme contenant un entier
 	 * @return String
 	 */
 	@Override
 	public String getType() {
-		return "Int";
+		return type;
 	}
 
 

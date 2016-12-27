@@ -1,10 +1,16 @@
+
+import org.antlr.v4.runtime.ANTLRInputStream;
+import org.antlr.v4.runtime.CommonTokenStream;
+import org.antlr.v4.runtime.misc.ParseCancellationException;
+import org.antlr.v4.runtime.tree.ParseTree;
+
 /**
  * Test class
  */
 public class Test {
 
     public static void main(String[] args) {
-        /*String testString = "(\\x.\\y.y) (\\z.z) M";
+        String testString = "(\\x.\\y.y) (\\z.z) M";
         String testString2 = "(\\x.x x) (\\x.x x)";
         String testString3 = "(\\x.x y x) (\\x.x)";
         String testString4 = "(\\y.\\x.y) x";
@@ -18,8 +24,8 @@ public class Test {
         String testString12 = "(λx.l y x) (λz.z) (λk.k) (λt.t)";
         String testString13 = "(λx.x x) (λx.x x)";
         String testString15 = "(rec f x.if(x=0)then{0}else{3+(f x-1)}) 7";
-        String testString16 = "if(((\\x.x) 5)=5)then(if(5=4)then(4)else(\\x.x))else(K) x";
-        String testString17 = "if(x=5)then(if(5=4)then(4)else(\\x.x))else(K) x";
+        String testString16 = "if(((\\x.x) 5)=5)then{if(5=4)then{4}else{\\x.x}}else{K} x";
+        String testString17 = "if(x=5)then{if(5=4)then{4}else{\\x.x}}else{K} x";
         String newString = "";
         int iterateCounter = 0;
         Value result;
@@ -54,14 +60,14 @@ public class Test {
 
         long time = stop - start;
 
-        System.out.println("Execution time = " + time);*/
+        System.out.println("Execution time = " + time);
 
 
         System.out.println("x+x+xy".replaceAll("\\bx\\b","5"));
 		
-		//Value a = new Value("M");
+		/*//Value a = new Value("M");
 		IfStat a = new IfStat(new Value(4),new Value(5),new Value("m"),new Value("K"),"!=");
 		System.out.println(a.getType());
-		//System.out.println(a.isTypable());
+		//System.out.println(a.isTypable());*/
     }
 }
