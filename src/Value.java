@@ -14,6 +14,7 @@ public class Value implements Typable{
 
     public Value(Object value) {
         this.value = value;
+		//System.out.println("On crée une Value avec comme objet : "+value.toString()+" De classe : "+value.getClass().getName());
     }
 
     public Integer asInteger() {
@@ -126,5 +127,17 @@ public class Value implements Typable{
     public boolean checkContinue() {
         return !(this.isAbstraction() || this.isVariable() || this.isInteger());
     }
+
+	/**
+	 * Retourne le type absolu de ce qui est contenu dans Value
+	 * @return String
+	 */
+	@Override
+	public String getAbsoluteType() {
+		if(isInteger()){ return "Int"; }
+		if(isString()){ return "String"; }
+		if(isTypable()){ return ((Typable) value).getAbsoluteType(); }
+		return "Invalide";
+	}
 
 }

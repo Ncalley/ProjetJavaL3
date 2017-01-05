@@ -12,6 +12,7 @@ public class Calcul implements Typable{
         this.left = left;
         this.right = right;
         this.operateur = operateur;
+		//System.out.println("Calcul créé");
     }
 
     public Value getLeft() {
@@ -56,5 +57,14 @@ public class Calcul implements Typable{
 	public String getType() {
 		if( left.getType().equals(right.getType()) && !(left.getType().equals("String") || left.getType().equals("Invalide")) ){ return left.getType(); }				
 		return "Invalide";
+	}
+
+	/**
+	 * renvoie la chaine correspondant aux types des éléments du calcul
+	 * @return  String
+	 */
+	@Override
+	public String getAbsoluteType() {
+		return left.getAbsoluteType() + operateur + right.getAbsoluteType();
 	}
 }

@@ -70,11 +70,16 @@ public class IfStat implements Typable{
 	 */
 	@Override
 	public String getType() {
-		/*System.out.println("left: "+leftToEq.getType());
-		System.out.println("right: "+rightToEq.getType());
-		System.out.println("then output: "+thenReturn.getType());
-		System.out.println("else output: "+elseReturn.getType());*/
 		if( leftToEq.getType().equals(rightToEq.getType()) ){ return thenReturn.getType(); }
 		return elseReturn.getType();
+	}
+
+	/**
+	 * Retourne le contenu du If typé sous forme de chaine
+	 * @return String
+	 */
+	@Override
+	public String getAbsoluteType() {
+		return "if("+leftToEq.getAbsoluteType()+operator+rightToEq.getAbsoluteType()+")then{"+thenReturn.getAbsoluteType()+"}else{"+elseReturn.getAbsoluteType()+"}";
 	}
 }

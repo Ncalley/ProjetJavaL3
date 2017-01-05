@@ -83,7 +83,7 @@ public class LambdaParser extends Parser {
 		super(input);
 		_interp = new ParserATNSimulator(this,_ATN,_decisionToDFA,_sharedContextCache);
 	}
-	public static class ExpressionContext extends ParserRuleContext {
+	public static class ExpressionContext extends ParserRuleContext implements Typable {
 		public ExpressionContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -93,6 +93,12 @@ public class LambdaParser extends Parser {
 		public void copyFrom(ExpressionContext ctx) {
 			super.copyFrom(ctx);
 		}
+
+		@Override
+		public String getType(){ return "Expression"; }
+
+		@Override
+		public String getAbsoluteType(){ return "Expression"; }
 	}
 	public static class AddContext extends ExpressionContext {
 		public Token op;

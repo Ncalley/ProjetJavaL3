@@ -60,9 +60,26 @@ public class Abstraction implements Typable{
         return exp.asString().matches(".*\\b" + var + "\\b.*");
     }
 
+	/**
+	 * Renvoie le type d'objet contenu dans l'abstraction
+	 * @return String
+	 */
 	@Override
 	public String getType() {
 		return exp.getType();
+	}
+
+	/**
+	 * Construit et renoie la chaine des types de l'abstraction
+	 * @return String
+	 */
+	@Override
+	public String getAbsoluteType() {
+		if (this.isInside()) {
+            return "λ" + var + "." + exp.getAbsoluteType();
+        } else {
+            return "(λ" + var + "." + exp.getAbsoluteType() + ")";
+        }
 	}
 
 }

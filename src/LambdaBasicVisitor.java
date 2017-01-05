@@ -5,6 +5,7 @@
  */
 public class LambdaBasicVisitor extends LambdaBaseVisitor<Value> {
 
+	private static Value expressionType;
     /**
      * Implémentation basique d'une application qui renvoie une application telle quelle.
      *
@@ -16,8 +17,10 @@ public class LambdaBasicVisitor extends LambdaBaseVisitor<Value> {
         Value left = this.visit(ctx.expression(0));
         Value right = this.visit(ctx.expression(1));
         if (ctx.parent instanceof LambdaParser.ParenExpressionContext) {
+			expressionType= new Value(new Apply(left, right, true));
             return new Value(new Apply(left, right, true));
         } else {
+			expressionType= new Value(new Apply(left, right, false));
             return new Value(new Apply(left, right, false));
         }
     }
@@ -33,8 +36,10 @@ public class LambdaBasicVisitor extends LambdaBaseVisitor<Value> {
         String varUnderLambda = ctx.VAR().getText();
         Value expression = this.visit(ctx.expression());
         if (ctx.parent instanceof LambdaParser.ParenExpressionContext) {
+			expressionType= new Value(new Abstraction(varUnderLambda, expression, false));
             return new Value(new Abstraction(varUnderLambda, expression, false));
         } else {
+			expressionType= new Value(new Abstraction(varUnderLambda, expression, true));
             return new Value(new Abstraction(varUnderLambda, expression, true));
         }
     }
@@ -46,9 +51,10 @@ public class LambdaBasicVisitor extends LambdaBaseVisitor<Value> {
     @Override
     public Value visitVariable(LambdaParser.VariableContext ctx) {
 		Variable v = new Variable(ctx.getText());
-		if(v.getId().matches("^\\p{Alpha}+$")){
+		if(ctx.getText().matches("^[a-zA-Z]+$")){
 			v.setType("String");
 		}
+		if(expressionType==null){expressionType = new Value(v);}
         return new Value(v);
     }
 
@@ -67,8 +73,9 @@ public class LambdaBasicVisitor extends LambdaBaseVisitor<Value> {
         Value leftToCheck = this.visit(ctx.expression(0));
         Value rightToCheck = this.visit(ctx.expression(1));
 
-
-        if (leftToCheck.isInteger() && rightToCheck.isInteger()) {
+		expressionType = new Value(new IfStat(leftToCheck, rightToCheck, this.visit(ctx.expression(2)), this.visit(ctx.expression(3)), ctx.op.getText()));
+		
+		if (leftToCheck.isInteger() && rightToCheck.isInteger()) {
             int left = leftToCheck.asInteger();
             int right = rightToCheck.asInteger();
             switch (ctx.op.getType()) {
@@ -179,9 +186,17 @@ public class LambdaBasicVisitor extends LambdaBaseVisitor<Value> {
         Value left = this.visit(ctx.expression(0));
         Value right = this.visit(ctx.expression(1));
 
-        return left.isInteger() && right.isInteger() ?
-                new Value(left.asInteger() * right.asInteger()) : new Value(new Calcul(new Value(left), '*', new Value(right)));
-
+        if(left.isInteger() && right.isInteger()){
+			if(expressionType!=null){ 
+				if(expressionType.isCalcul() && (expressionType.asCalcul().getOperateur()=='-' || expressionType.asCalcul().getOperateur()=='+')){
+					expressionType =  new Value(new Calcul(new Value(left.asInteger()),'*',expressionType));
+				}else{ expressionType =  new Value(new Calcul(expressionType, '*', new Value(right.asInteger()))); }}
+			else{ expressionType = new Value(new Calcul(new Value(left), '*', new Value(right))); }
+            return new Value(left.asInteger() * right.asInteger()); 	
+		}else{
+			expressionType =  new Value(new Calcul(new Value(left), '+', new Value(right)));
+			return new Value(new Calcul(new Value(left), '*', new Value(right)));
+		}
     }
 
     /**
@@ -198,14 +213,34 @@ public class LambdaBasicVisitor extends LambdaBaseVisitor<Value> {
 
         switch (ctx.op.getType()) {
             case LambdaParser.PLUS:
-                return left.isInteger() && right.isInteger() ?
-                        new Value(left.asInteger() + right.asInteger()) : new Value(new Calcul(new Value(left), '+', new Value(right)));
+                if(left.isInteger() && right.isInteger()){
+					if(expressionType!=null){ expressionType =  new Value(new Calcul(expressionType, '+', new Value(right.asInteger()))); }
+					else{ expressionType = new Value(new Calcul(new Value(left), '+', new Value(right))); }
+                    return new Value(left.asInteger() + right.asInteger());
+				}else{
+					expressionType =  new Value(new Calcul(new Value(left), '+', new Value(right)));
+					return new Value(new Calcul(new Value(left), '+', new Value(right)));
+				}
             case LambdaParser.MINUS:
-                return left.isInteger() && right.isInteger() ?
-                        new Value(left.asInteger() - right.asInteger()) : new Value(new Calcul(new Value(left), '-', new Value(right)));
+                if(left.isInteger() && right.isInteger()){
+					if(expressionType!=null){ expressionType =  new Value(new Calcul(expressionType, '-', new Value(right))); }
+					else{ expressionType =  new Value(new Calcul(new Value(left), '-', new Value(right))); }
+                    return new Value(left.asInteger() - right.asInteger());
+				}else{
+					expressionType =  new Value(new Calcul(new Value(left), '-', new Value(right)));
+					return new Value(new Calcul(new Value(left), '-', new Value(right)));
+				}
             default:
                 throw new RuntimeException("L'opérateur de l'expression est inconnu (mais cela ne devrait pas arriver)");
 
         }
     }
+
+	public static Value getExpressionType() {
+		return expressionType;
+	}
+	
+	public static void clearType(){
+		expressionType = null;
+	}
 }

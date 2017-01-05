@@ -293,7 +293,7 @@ public class LambdaInterpreterGUI extends javax.swing.JFrame {
      * Durant l'évaluation les étapes intermédiaires sont souvent écrites dans le workSpace afin de
      * faciliter la compréhension des termes et de leur réduction.
 	 * 
-	 * TODO : ajouter la fonction de check de type (checkBox déjà mise en place par mes soins ;p)
+	 * 
      *
      * @param evt L'event qui a trigger l'action.
      */
@@ -302,10 +302,13 @@ public class LambdaInterpreterGUI extends javax.swing.JFrame {
             workSpace.setText("");
             String term = inputField.getText();
             history.addInput(term);
+			
             if (term.equals("clear")) {
                 workSpace.setText("");
             } else {
                 Value result;
+				Value val;
+				FreeVariableVisitor freeVariableVisitor = new FreeVariableVisitor();
                 int iterateCounter = 0;
 
                 workSpace.append(term + "\n");
@@ -316,10 +319,12 @@ public class LambdaInterpreterGUI extends javax.swing.JFrame {
                 try {
                     do {
                         ParseTree tree = parse(term);
-                        FreeVariableVisitor freeVariableVisitor = new FreeVariableVisitor();
+						freeVariableVisitor.clearType();
                         freeVariableVisitor.visit(tree);
                         ReduceVisitor visitor = new ReduceVisitor(freeVariableVisitor.getFreeVariables());
-                        result = visitor.visit(tree);
+						val=visitor.getExpressionType();
+						result = visitor.visit(tree);
+						//System.out.println(val);
                         if (!result.asString().equals(term)) {
                             workSpace.append("  =  " + result.asString() + "\n");
                         }
@@ -327,7 +332,11 @@ public class LambdaInterpreterGUI extends javax.swing.JFrame {
                         iterateCounter++;
                     } while (result.checkContinue() && iterateCounter < 100);
 					if (checkTypeOption.isSelected()){
-						workSpace.append("output type : " + result.getType() + "\n");
+						if(val!=null){
+							workSpace.append("\nEntered expression's types :\n"+val.getAbsoluteType()+"\nOutput type :\n	" + result.getType() + "\n");
+						}else{
+							workSpace.append("\nEntered expression's types :\n"+"PROBLEM"+"\nOutput type :\n	" + result.getType() + "\n");
+						}
 					}
                 } catch (ParseCancellationException e) {
                     workSpace.append(e.getMessage());
@@ -466,17 +475,14 @@ public class LambdaInterpreterGUI extends javax.swing.JFrame {
     private ParseTree parse(String term) {
 
         ANTLRInputStream inputStream = new ANTLRInputStream(term);
-
         LambdaLexer lexer = new LambdaLexer(inputStream);
         lexer.removeErrorListeners();
         lexer.addErrorListener(LambdaErrorListener.INSTANCE);
 
         CommonTokenStream tokens = new CommonTokenStream(lexer);
-
         LambdaParser parser = new LambdaParser(tokens);
         parser.removeErrorListeners();
         parser.addErrorListener(LambdaErrorListener.INSTANCE);
-
         return parser.expression();
 
     }
