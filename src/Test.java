@@ -70,6 +70,7 @@ public class Test {
 		System.out.println(a.getType());
 		//System.out.println(a.isTypable());*/
 		
-		
+		Value a = new Value("Str");
+		System.out.println(a.isTypeValid());
     }
 }

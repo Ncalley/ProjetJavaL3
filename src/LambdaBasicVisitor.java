@@ -1,3 +1,7 @@
+
+
+import java.util.HashMap;
+
 /**
  * <code>LambdaBasicVisitor</code> est une implémentation basique du Visitor généré par
  * ANTLR4.
@@ -6,6 +10,8 @@
 public class LambdaBasicVisitor extends LambdaBaseVisitor<Value> {
 
 	private static Value expressionType;
+	protected static HashMap<String,String> rules;
+	protected static ruleChecker checker;
     /**
      * Implémentation basique d'une application qui renvoie une application telle quelle.
      *
@@ -16,13 +22,18 @@ public class LambdaBasicVisitor extends LambdaBaseVisitor<Value> {
     public Value visitApplication(LambdaParser.ApplicationContext ctx) {
         Value left = this.visit(ctx.expression(0));
         Value right = this.visit(ctx.expression(1));
+		Value result;
         if (ctx.parent instanceof LambdaParser.ParenExpressionContext) {
 			expressionType= new Value(new Apply(left, right, true));
-            return new Value(new Apply(left, right, true));
+            result = new Value(new Apply(left, right, true));
         } else {
 			expressionType= new Value(new Apply(left, right, false));
-            return new Value(new Apply(left, right, false));
+            result = new Value(new Apply(left, right, false));
         }
+		
+		Value[] data= {left,right,result};
+		checker.check("Apply", rules, data);
+		return result;
     }
 
     /**
@@ -35,13 +46,18 @@ public class LambdaBasicVisitor extends LambdaBaseVisitor<Value> {
     public Value visitAbstraction(LambdaParser.AbstractionContext ctx) {
         String varUnderLambda = ctx.VAR().getText();
         Value expression = this.visit(ctx.expression());
+		Value result;
+		
         if (ctx.parent instanceof LambdaParser.ParenExpressionContext) {
 			expressionType= new Value(new Abstraction(varUnderLambda, expression, false));
-            return new Value(new Abstraction(varUnderLambda, expression, false));
+            result = new Value(new Abstraction(varUnderLambda, expression, false));
         } else {
 			expressionType= new Value(new Abstraction(varUnderLambda, expression, true));
-            return new Value(new Abstraction(varUnderLambda, expression, true));
+            result = new Value(new Abstraction(varUnderLambda, expression, true));
         }
+		Value[] data= {new Value(varUnderLambda),expression,result};
+		checker.check("Abstraction", rules, data);
+		return result;
     }
 
     /**
@@ -55,7 +71,10 @@ public class LambdaBasicVisitor extends LambdaBaseVisitor<Value> {
 			v.setType("String");
 		}
 		if(expressionType==null){expressionType = new Value(v);}
-        return new Value(v);
+		Value result = new Value(v);
+		Value[] data= {new Value(v),result};
+		checker.check("Variable", rules, data);
+        return result;
     }
 
     /**
@@ -72,6 +91,9 @@ public class LambdaBasicVisitor extends LambdaBaseVisitor<Value> {
 
         Value leftToCheck = this.visit(ctx.expression(0));
         Value rightToCheck = this.visit(ctx.expression(1));
+		Value trueReturn = this.visit(ctx.expression(2));
+		Value falseReturn = this.visit(ctx.expression(3));
+		Value result;
 
 		expressionType = new Value(new IfStat(leftToCheck, rightToCheck, this.visit(ctx.expression(2)), this.visit(ctx.expression(3)), ctx.op.getText()));
 		
@@ -81,64 +103,60 @@ public class LambdaBasicVisitor extends LambdaBaseVisitor<Value> {
             switch (ctx.op.getType()) {
                 case LambdaParser.EQ:
                     if (left == right) {
-                        Value trueReturn = this.visit(ctx.expression(2));
-                        return new Value(trueReturn.value);
+                        result = new Value(trueReturn.value);
                     } else {
-                        Value falseReturn = this.visit(ctx.expression(3));
-                        return new Value(falseReturn.value);
+                        result = new Value(falseReturn.value);
                     }
+					break;
 
                 case LambdaParser.GT:
                     if (left > right) {
-                        Value trueReturn = this.visit(ctx.expression(2));
-                        return new Value(trueReturn.value);
+                        result = new Value(trueReturn.value);
                     } else {
-                        Value falseReturn = this.visit(ctx.expression(3));
-                        return new Value(falseReturn.value);
+                        result = new Value(falseReturn.value);
                     }
+					break;
 
                 case LambdaParser.LT:
                     if (left < right) {
-                        Value trueReturn = this.visit(ctx.expression(2));
-                        return new Value(trueReturn.value);
+                        result = new Value(trueReturn.value);
                     } else {
-                        Value falseReturn = this.visit(ctx.expression(3));
-                        return new Value(falseReturn.value);
+                        result = new Value(falseReturn.value);
                     }
+					break;
 
                 case LambdaParser.GTEQ:
                     if (left >= right) {
-                        Value trueReturn = this.visit(ctx.expression(2));
-                        return new Value(trueReturn.value);
+                        result = new Value(trueReturn.value);
                     } else {
-                        Value falseReturn = this.visit(ctx.expression(3));
-                        return new Value(falseReturn.value);
+                        result = new Value(falseReturn.value);
                     }
+					break;
 
                 case LambdaParser.LTEQ:
                     if (left <= right) {
-                        Value trueReturn = this.visit(ctx.expression(2));
-                        return new Value(trueReturn.value);
+                        result = new Value(trueReturn.value);
                     } else {
-                        Value falseReturn = this.visit(ctx.expression(3));
-                        return new Value(falseReturn.value);
+                        result = new Value(falseReturn.value);
                     }
+					break;
                 case LambdaParser.NEQ:
                     if (left != right) {
-                        Value trueReturn = this.visit(ctx.expression(2));
-                        return new Value(trueReturn.value);
+                        result = new Value(trueReturn.value);
                     } else {
-                        Value falseReturn = this.visit(ctx.expression(3));
-                        return new Value(falseReturn.value);
+                        result = new Value(falseReturn.value);
                     }
+					break;
                 default:
                     throw new RuntimeException("L'opérateur de l'expression est inconnu (mais cela ne devrait pas arriver)");
             }
 
         } else {
-            return new Value(new IfStat(leftToCheck, rightToCheck, this.visit(ctx.expression(2)), this.visit(ctx.expression(3)), ctx.op.getText()));
+            result = new Value(new IfStat(leftToCheck, rightToCheck, this.visit(ctx.expression(2)), this.visit(ctx.expression(3)), ctx.op.getText()));
         }
-
+		Value[] data= {leftToCheck,rightToCheck,new Value(trueReturn.value),new Value(falseReturn.value),result};
+		checker.check("IfStat", rules, data);
+        return result;
     }
 
     /**
@@ -150,8 +168,11 @@ public class LambdaBasicVisitor extends LambdaBaseVisitor<Value> {
         String funcName = ctx.VAR(0).getText();
         String applyVar = ctx.VAR(1).getText();
         Value function = this.visit(ctx.expression());
-
-        return new Value(new RecFunction(new Variable(funcName), new Variable(applyVar), function));
+		Value v = new Value(new RecFunction(new Variable(funcName), new Variable(applyVar), function));
+		expressionType = v;
+		Value[] data= {new Value(funcName),new Value(applyVar),function,v};
+		checker.check("RecFunction", rules, data);
+        return v;
 
     }
 
@@ -185,6 +206,7 @@ public class LambdaBasicVisitor extends LambdaBaseVisitor<Value> {
     public Value visitMult(LambdaParser.MultContext ctx) {
         Value left = this.visit(ctx.expression(0));
         Value right = this.visit(ctx.expression(1));
+		Value result;
 
         if(left.isInteger() && right.isInteger()){
 			if(expressionType!=null){ 
@@ -192,11 +214,14 @@ public class LambdaBasicVisitor extends LambdaBaseVisitor<Value> {
 					expressionType =  new Value(new Calcul(new Value(left.asInteger()),'*',expressionType));
 				}else{ expressionType =  new Value(new Calcul(expressionType, '*', new Value(right.asInteger()))); }}
 			else{ expressionType = new Value(new Calcul(new Value(left), '*', new Value(right))); }
-            return new Value(left.asInteger() * right.asInteger()); 	
+            result = new Value(left.asInteger() * right.asInteger()); 	
 		}else{
 			expressionType =  new Value(new Calcul(new Value(left), '+', new Value(right)));
-			return new Value(new Calcul(new Value(left), '*', new Value(right)));
+			result = new Value(new Calcul(new Value(left), '*', new Value(right)));
 		}
+		Value[] data= {left,right,result};
+		checker.check("Calcul", rules, data);
+        return result;
     }
 
     /**
@@ -210,30 +235,34 @@ public class LambdaBasicVisitor extends LambdaBaseVisitor<Value> {
     public Value visitAdd(LambdaParser.AddContext ctx) {
         Value left = this.visit(ctx.expression(0));
         Value right = this.visit(ctx.expression(1));
-
+		Value result=new Value(1);
+		
         switch (ctx.op.getType()) {
             case LambdaParser.PLUS:
                 if(left.isInteger() && right.isInteger()){
 					if(expressionType!=null){ expressionType =  new Value(new Calcul(expressionType, '+', new Value(right.asInteger()))); }
 					else{ expressionType = new Value(new Calcul(new Value(left), '+', new Value(right))); }
-                    return new Value(left.asInteger() + right.asInteger());
+                    result = new Value(left.asInteger() + right.asInteger());
 				}else{
 					expressionType =  new Value(new Calcul(new Value(left), '+', new Value(right)));
-					return new Value(new Calcul(new Value(left), '+', new Value(right)));
-				}
+					result = new Value(new Calcul(new Value(left), '+', new Value(right)));
+				}break;
             case LambdaParser.MINUS:
                 if(left.isInteger() && right.isInteger()){
 					if(expressionType!=null){ expressionType =  new Value(new Calcul(expressionType, '-', new Value(right))); }
 					else{ expressionType =  new Value(new Calcul(new Value(left), '-', new Value(right))); }
-                    return new Value(left.asInteger() - right.asInteger());
+                    result = new Value(left.asInteger() - right.asInteger());
 				}else{
 					expressionType =  new Value(new Calcul(new Value(left), '-', new Value(right)));
-					return new Value(new Calcul(new Value(left), '-', new Value(right)));
-				}
+					result = new Value(new Calcul(new Value(left), '-', new Value(right)));
+				}break;
             default:
                 throw new RuntimeException("L'opérateur de l'expression est inconnu (mais cela ne devrait pas arriver)");
 
         }
+		Value[] data= {left,right,result};
+		checker.check("Calcul", rules, data);
+        return result;
     }
 
 	public static Value getExpressionType() {
@@ -242,5 +271,14 @@ public class LambdaBasicVisitor extends LambdaBaseVisitor<Value> {
 	
 	public static void clearType(){
 		expressionType = null;
+	}
+	
+	public static void setRules(HashMap<String,String> rules) {
+		LambdaBasicVisitor.rules = rules;
+		checker = new ruleChecker();
+	}
+	
+	public static boolean isCorrectlyTyped(){
+		return checker.isRespected();
 	}
 }

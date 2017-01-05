@@ -1,3 +1,4 @@
+import java.util.ArrayList;
 import java.util.Objects;
 
 /**
@@ -10,7 +11,7 @@ import java.util.Objects;
 public class Value implements Typable{
 
     final Object value;
-	
+	private static ArrayList<String> acceptedTypes;
 
     public Value(Object value) {
         this.value = value;
@@ -69,6 +70,13 @@ public class Value implements Typable{
         return value instanceof IfStat;
     }
 	
+	public boolean isTypeValid() {
+		for(String elt:acceptedTypes){
+			if(value.getClass().getName().equals(elt)){return true;}
+		}
+		return false;
+	}
+	
 	/**
 	 * Renvoie vrai si la valeur est typable (par défaut les chaines et entiers sont typables)
 	 * @return boolean
@@ -112,8 +120,7 @@ public class Value implements Typable{
 	 */
 	@Override
 	public String getType() {
-		if(isInteger()){ return "Int"; }
-		if(isString()){ return "String"; }
+		if(isTypeValid()){ return new SimpleTypes().nameChange(value.getClass().getName()); }
 		if(isTypable()){ return ((Typable) value).getType(); }
 		return "Invalide";
 	}
@@ -134,10 +141,14 @@ public class Value implements Typable{
 	 */
 	@Override
 	public String getAbsoluteType() {
-		if(isInteger()){ return "Int"; }
-		if(isString()){ return "String"; }
+		if(isTypeValid()){ return new SimpleTypes().nameChange(value.getClass().getName());}
 		if(isTypable()){ return ((Typable) value).getAbsoluteType(); }
 		return "Invalide";
 	}
+
+	public static void setAcceptedTypes(ArrayList<String> acceptedTypes) {
+		Value.acceptedTypes = acceptedTypes;
+	}
+	
 
 }
