@@ -17,8 +17,10 @@ import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Objects;
 
 
 /**
@@ -52,11 +54,13 @@ public class LambdaInterpreterGUI extends javax.swing.JFrame {
     private DefaultListModel<String> saveTermModel;
     private InputHistory history;
     private String helpString;
+	private ArrayList<String> acceptedTypes;
 
     /**
      * Creates new LambdaInterpreterGUI
      */
     public LambdaInterpreterGUI() {
+		loadTypes("TypeFile.txt");
         initComponents();
     }
 
@@ -332,6 +336,7 @@ public class LambdaInterpreterGUI extends javax.swing.JFrame {
                         iterateCounter++;
                     } while (result.checkContinue() && iterateCounter < 100);
 					if (checkTypeOption.isSelected()){
+						workSpace.append("\nValid type : "+freeVariableVisitor.isCorrectlyTyped());
 						if(val!=null){
 							workSpace.append("\nEntered expression's types :\n"+val.getAbsoluteType()+"\nOutput type :\n	" + result.getType() + "\n");
 						}else{
@@ -343,7 +348,7 @@ public class LambdaInterpreterGUI extends javax.swing.JFrame {
                     saveTermModel.removeElement(saveTermModel.lastElement());
                 } catch (ClassCastException e) {
                     workSpace.append("Please put an If Statement in the recursive function expression if you want to do \n" +
-                            "an application on it.");
+                            "an application on it."+e);
                 }
 
                 if (iterateCounter == 100) {
@@ -486,4 +491,13 @@ public class LambdaInterpreterGUI extends javax.swing.JFrame {
         return parser.expression();
 
     }
+	
+	private void loadTypes(String fileName) {
+		TypeLexer lexer = new TypeLexer();
+		TypeParser parser = new TypeParser(lexer.readFile(fileName));
+		//System.out.println(parser.toString());
+		new Value("").setAcceptedTypes(parser.getAcceptedTypes());
+		LambdaBasicVisitor l = new LambdaBasicVisitor();
+		l.setRules(parser.getEvaluationRules());
+	}
 }
