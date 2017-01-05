@@ -13,7 +13,17 @@ public interface Typable {
 	/**
 	 * Méthode qui va renvoyer le type de l'élément en question,
 	 * par défaut String ou Int ou Invalide
-	 * @return 
+	 * @return String
 	 */
-	public String getType();
+	public abstract String getType();
+	
+	/**
+	 * Méthode qui va renvoyer le type exact de l'élément et non celui de son contenu
+	 * et permet de typer l'expression complète et pas juste le résultat.
+	 * par exemple: 
+	 *		variable	->	Var
+	 *		IfStat		->	if(Int=Int)then{Var}else{String}
+	 * @return String
+	 */
+	public abstract String getAbsoluteType();
 }

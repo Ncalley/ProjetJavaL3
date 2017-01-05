@@ -10,7 +10,7 @@ import org.antlr.v4.runtime.tree.ParseTree;
 public class Test {
 
     public static void main(String[] args) {
-        String testString = "(\\x.\\y.y) (\\z.z) M";
+        /*String testString = "(\\x.\\y.y) (\\z.z) M";
         String testString2 = "(\\x.x x) (\\x.x x)";
         String testString3 = "(\\x.x y x) (\\x.x)";
         String testString4 = "(\\y.\\x.y) x";
@@ -63,11 +63,13 @@ public class Test {
         System.out.println("Execution time = " + time);
 
 
-        System.out.println("x+x+xy".replaceAll("\\bx\\b","5"));
+        System.out.println("x+x+xy".replaceAll("\\bx\\b","5"));*/
 		
 		/*//Value a = new Value("M");
 		IfStat a = new IfStat(new Value(4),new Value(5),new Value("m"),new Value("K"),"!=");
 		System.out.println(a.getType());
 		//System.out.println(a.isTypable());*/
+		
+		
     }
 }

@@ -57,4 +57,14 @@ public class RecFunction implements Typable{
 	public String getType() {
 		return function.getType();
 	}
+
+	/**
+	 * Renvoie les types contenus dans la fonction récursive
+	 * @return String
+	 */
+	@Override
+	public String getAbsoluteType() {
+		return "(rec " + funcNameVar.getAbsoluteType() + " " + applyToVar.getAbsoluteType() + "." + function.getAbsoluteType() + ")";
+	}
+	
 }

@@ -51,5 +51,15 @@ public class Variable implements Typable{
 		return type;
 	}
 
+	/**
+	 * Retourne le type absolu de la variable
+	 * Il s'agit d'une variable !
+	 * @return String
+	 */
+	@Override
+	public String getAbsoluteType() {
+		return "Var["+getType()+"]";
+	}
+
 
 }

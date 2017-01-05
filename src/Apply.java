@@ -53,13 +53,25 @@ public class Apply implements Typable{
     }
 
 	/**
-	 * Pas très cohérent mais j'ai essayé de faire au plus logique
+	 * Renvoie le type de l'élément à droite de l'abstraction
 	 * @return String
 	 */
 	@Override
 	public String getType() {
-		//return left.getType()+" "+right.getType();
 		return right.getType();
+	}
+
+	/**
+	 * Construit la chaine de typage des éléments contenus dans l'application et la retourne
+	 * @return String
+	 */
+	@Override
+	public String getAbsoluteType() {
+		if (this.shouldPar) {
+            return "(" + left.getAbsoluteType() + " " + right.getAbsoluteType() + ")";
+        } else {
+            return left.getAbsoluteType() + " " + right.getAbsoluteType();
+        }
 	}
 
 }
